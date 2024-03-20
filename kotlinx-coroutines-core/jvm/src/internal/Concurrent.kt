@@ -11,7 +11,7 @@ internal actual typealias ReentrantLock = java.util.concurrent.locks.ReentrantLo
 internal actual inline fun <T> ReentrantLock.withLock(action: () -> T) = this.withLockJvm(action)
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // Visibility
-internal actual typealias WorkaroundAtomicReference<T> = java.util.concurrent.atomic.AtomicReference<T>
+internal actual typealias WorkaroundAtomicReference<V> = java.util.concurrent.atomic.AtomicReference<V>
 
 // BenignDataRace is OptionalExpectation and doesn't have to be here
 // but then IC breaks. See KT-66317
