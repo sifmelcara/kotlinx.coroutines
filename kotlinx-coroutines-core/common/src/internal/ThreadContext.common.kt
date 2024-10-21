@@ -27,9 +27,9 @@ private class ThreadState(@JvmField val context: CoroutineContext, n: Int) {
 }
 
 // Counts ThreadContextElements in the context
-// Any? here is Int | ThreadContextElement (when count is one)
+// Any here is Int | ThreadContextElement (when count is one)
 private val countAll =
-    fun (countOrElement: Any?, element: CoroutineContext.Element): Any? {
+    fun (countOrElement: Any, element: CoroutineContext.Element): Any {
         if (element is ThreadContextElement<*>) {
             val inCount = countOrElement as? Int ?: 1
             return if (inCount == 0) element else inCount + 1
@@ -91,4 +91,4 @@ internal fun restoreThreadContext(context: CoroutineContext, oldState: Any?) {
     }
 }
 
-internal fun threadContextElements(context: CoroutineContext): Any = context.fold(0, countAll)!!
+internal fun threadContextElements(context: CoroutineContext): Any = context.fold(0, countAll)
