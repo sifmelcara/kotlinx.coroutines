@@ -53,15 +53,15 @@ private val updateState =
         return state
     }
 
+internal expect fun isZeroCount(countOrElement: Any?): Boolean
+
 // countOrElement is pre-cached in dispatched continuation
 // returns NO_THREAD_ELEMENTS if the contest does not have any ThreadContextElements
 internal fun updateThreadContext(context: CoroutineContext, countOrElement: Any?): Any? {
     @Suppress("NAME_SHADOWING")
     val countOrElement = countOrElement ?: threadContextElements(context)
-    @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
     return when {
-        countOrElement === 0 -> NO_THREAD_ELEMENTS // very fast path when there are no active ThreadContextElements
-        //    ^^^ identity comparison for speed, we know zero always has the same identity
+        isZeroCount(countOrElement) -> NO_THREAD_ELEMENTS // very fast path when there are no active ThreadContextElements
         countOrElement is Int -> {
             // slow path for multiple active ThreadContextElements, allocates ThreadState for multiple old values
             context.fold(ThreadState(context, countOrElement), updateState)
