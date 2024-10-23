@@ -3,6 +3,16 @@ package kotlinx.coroutines
 import kotlinx.coroutines.internal.*
 import kotlin.coroutines.*
 
+actual typealias ScopedContextElement<T> = ThreadContextElement<T>
+
+/**
+ * @see [ScopedContextElement]
+ */
+public interface ThreadContextElement<S> : CoroutineContext.Element {
+    public fun updateThreadContext(context: CoroutineContext): S
+    public fun restoreThreadContext(context: CoroutineContext, oldState: S)
+}
+
 /**
  * A [ThreadContextElement] copied whenever a child coroutine inherits a context containing it.
  *

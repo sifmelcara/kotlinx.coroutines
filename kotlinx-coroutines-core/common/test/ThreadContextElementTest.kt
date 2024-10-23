@@ -6,7 +6,7 @@ import kotlin.test.*
 import kotlinx.coroutines.internal.*
 
 class ThreadContextElementTest : TestBase() {
-    interface TestThreadContextElement : ThreadContextElement<Int> {
+    interface TestThreadContextElement : ScopedContextElement<Int> {
         companion object Key : CoroutineContext.Key<TestThreadContextElement>
     }
 
@@ -85,7 +85,7 @@ internal class MyData
 internal val threadContextElementThreadLocal = commonThreadLocal<MyData?>(Symbol("ThreadContextElementTest"))
 
 // declare context element holding MyData
-internal class MyElement(val data: MyData) : ThreadContextElement<MyData?> {
+internal class MyElement(val data: MyData) : ScopedContextElement<MyData?> {
     // declare companion object for a key of this element in coroutine context
     companion object Key : CoroutineContext.Key<MyElement>
 

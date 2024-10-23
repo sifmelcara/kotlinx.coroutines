@@ -1,6 +1,6 @@
 package kotlinx.coroutines.internal
 
-import kotlinx.coroutines.ThreadContextElement
+import kotlinx.coroutines.ScopedContextElement
 import kotlin.coroutines.*
 import kotlin.jvm.JvmField
 
@@ -11,12 +11,12 @@ internal val NO_THREAD_ELEMENTS = Symbol("NO_THREAD_ELEMENTS")
 @Suppress("UNCHECKED_CAST")
 private class ThreadState(@JvmField val context: CoroutineContext, n: Int) {
     private val values = arrayOfNulls<Any>(n)
-    private val elements = arrayOfNulls<ThreadContextElement<Any?>>(n)
+    private val elements = arrayOfNulls<ScopedContextElement<Any?>>(n)
     private var i = 0
 
-    fun append(element: ThreadContextElement<*>, value: Any?) {
+    fun append(element: ScopedContextElement<*>, value: Any?) {
         values[i] = value
-        elements[i++] = element as ThreadContextElement<Any?>
+        elements[i++] = element as ScopedContextElement<Any?>
     }
 
     fun restore(context: CoroutineContext) {
@@ -30,7 +30,7 @@ private class ThreadState(@JvmField val context: CoroutineContext, n: Int) {
 // Any here is Int | ThreadContextElement (when count is one)
 private val countAll =
     fun (countOrElement: Any, element: CoroutineContext.Element): Any {
-        if (element is ThreadContextElement<*>) {
+        if (element is ScopedContextElement<*>) {
             val inCount = countOrElement as? Int ?: 1
             return if (inCount == 0) element else inCount + 1
         }
@@ -39,15 +39,15 @@ private val countAll =
 
 // Find one (first) ThreadContextElement in the context, it is used when we know there is exactly one
 private val findOne =
-    fun (found: ThreadContextElement<*>?, element: CoroutineContext.Element): ThreadContextElement<*>? {
+    fun (found: ScopedContextElement<*>?, element: CoroutineContext.Element): ScopedContextElement<*>? {
         if (found != null) return found
-        return element as? ThreadContextElement<*>
+        return element as? ScopedContextElement<*>
     }
 
 // Updates state for ThreadContextElements in the context using the given ThreadState
 private val updateState =
     fun (state: ThreadState, element: CoroutineContext.Element): ThreadState {
-        if (element is ThreadContextElement<*>) {
+        if (element is ScopedContextElement<*>) {
             state.append(element, element.updateThreadContext(state.context))
         }
         return state
@@ -69,7 +69,7 @@ internal fun updateThreadContext(context: CoroutineContext, countOrElement: Any?
         else -> {
             // fast path for one ThreadContextElement (no allocations, no additional context scan)
             @Suppress("UNCHECKED_CAST")
-            val element = countOrElement as ThreadContextElement<Any?>
+            val element = countOrElement as ScopedContextElement<Any?>
             element.updateThreadContext(context)
         }
     }
@@ -85,7 +85,7 @@ internal fun restoreThreadContext(context: CoroutineContext, oldState: Any?) {
         else -> {
             // fast path for one ThreadContextElement, but need to find it
             @Suppress("UNCHECKED_CAST")
-            val element = context.fold(null, findOne) as ThreadContextElement<Any?>
+            val element = context.fold(null, findOne) as ScopedContextElement<Any?>
             element.restoreThreadContext(context, oldState)
         }
     }

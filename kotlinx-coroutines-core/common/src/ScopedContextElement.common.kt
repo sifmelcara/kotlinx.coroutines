@@ -50,10 +50,10 @@ import kotlin.coroutines.*
  * may happen in parallel to the subsequent [updateThreadContext] and [restoreThreadContext] operations.
  * See [CopyableThreadContextElement] for advanced interleaving details.
  *
- * All implementations of [ThreadContextElement] should be thread-safe and guard their internal mutable state
+ * All implementations of [ScopedContextElement] should be thread-safe and guard their internal mutable state
  * within an element accordingly.
  */
-public interface ThreadContextElement<S> : CoroutineContext.Element {
+public expect interface ScopedContextElement<S> : CoroutineContext.Element {
     /**
      * Updates context of the current thread.
      * This function is invoked before the coroutine in the specified [context] is resumed in the current thread

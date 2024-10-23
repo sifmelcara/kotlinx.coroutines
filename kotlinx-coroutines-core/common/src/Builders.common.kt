@@ -212,7 +212,7 @@ internal class UndispatchedCoroutine<in T>(
 ) : ScopeCoroutine<T>(if (context[UndispatchedMarker] == null) context + UndispatchedMarker else context, uCont) {
 
     /**
-     * The state of [ThreadContextElement]s associated with the current undispatched coroutine.
+     * The state of [ScopedContextElement]s associated with the current undispatched coroutine.
      * It is stored in a thread local because this coroutine can be used concurrently in suspend-resume race scenario.
      * See the followin, boiled down example with inlined `withContinuationContext` body:
      * ```

@@ -57,7 +57,7 @@ class ThreadContextElementNativeTest : TestBase() {
                 " ThreadContextElement that did not override `copyForChildCoroutine()`")
     }
 
-    class JobCaptor(val capturees: ArrayList<Job> = ArrayList()) : ThreadContextElement<Unit> {
+    class JobCaptor(val capturees: ArrayList<Job> = ArrayList()) : ScopedContextElement<Unit> {
 
         companion object Key : CoroutineContext.Key<MyElement>
 
